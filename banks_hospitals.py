@@ -17,6 +17,7 @@ class Hospitals:
             'pin': pin,
             'city': city,
             'state': state,
+            'rating': 1,
             # Array of available facilities.
             'available_facilities': available_facilities
         }
@@ -61,7 +62,8 @@ class Banks:
             'phone_number': phone_number,
             'pin': pin,
             'city': city,
-            'state': state
+            'state': state,
+            'rating': 1
         }
 
         try:
