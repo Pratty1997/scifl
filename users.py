@@ -200,10 +200,10 @@ class User:
             return False
 
 user = User()
-email = 'prateekbedi96@gmail.com'
-name = 'Prateek Bedi'
+email = 'xyz@gmail.com'
+name = 'XYZ'
 password = 'abcd'
-phone_number = 9406011847
+phone_number = 1234567890
 role = 'patient'
 reason= 'malpractice'
 
@@ -218,4 +218,6 @@ reason= 'malpractice'
 
 # print(user.verify_user(email))
 
-print(user.reactivate_user(email))
+# print(user.reactivate_user(email))
+
+# print(user.block_user(email,reason))
