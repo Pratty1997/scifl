@@ -74,10 +74,10 @@ class User:
             'blocked': {
                 'flag': False,
                 'reason': ''
-            }
-            'verfied': {
+            },
+            'verified': {
                 'status': False,
-                'action': 'Email verification pending'
+                'action': 'Email verification'
             }
         }
 
@@ -98,12 +98,21 @@ class User:
         user = self.find_user(email)
         
         if(user):
+            if(user['blocked']['flag'] == True):
+                # User has been blocked by us.
+                return 'User has been blocked by us'
+            if(user['verified']['status'] == False):
+                # User has done completed some verification action.
+                return ('Please complete ' + user['verified']['action'] + ' to proceed')
+            
             password_validation = self.validate_password(user, password)
             if(password_validation):
                 # For security, return a token that will be used to monitor all authenticated activities. 
                 return True
             else:
                 return False
+        else:
+            return 'Please register to continue'
     
     def change_password(self, email, password):
         
@@ -115,10 +124,65 @@ class User:
         
         except Exception as e:
             return False
+    
+    def verify_user(self, email):
 
+        user = self.find_user(email)
+
+        if(user):
+            match = {'email': email}
+            update = {'$set': { "verified.status": True, 'verified.action': ''}}
+            
+            if(user['blocked']['flag'] == True):
+                return 'User has been blocked for '+ user['blocked']['reason'] 
+            
+            if(user['verified']['status'] == True):
+                return 'User is already verified'
+
+            try:
+                self.users.update_one(match, update)
+                return True
+            except Exception as e:
+                print(e)
+                return False
+
+        else:
+            return 'User not found'
+
+    def block_user(self, email, reason):
+        
+        user = self.find_user(email)
+
+        if(user):
+            
+            match = {'email' : email}
+            update = {'$set': {'blocked.flag' : True, 'blocked.reason': reason}}
+
+            try:
+                self.users.update_one(match, update)
+                return 'User has been successfully blocked'
+            except Exception as e:
+                return False
+
+    def reactivate_user(self, email):
+
+        user = self.find_user(email)
+
+        if(user):
+
+            match = {'email': email}
+            update = {'$set': {'blocked.flag': False, 'blocked.reason': ''}}
+            if(user['blocked']['flag'] == False):
+                return 'User is not blocked'
+            try:
+                self.users.update_one(match, update)
+                return 'User has been successfully reactivated'
+            except Exception as e:
+                return False
+            
     def generate_otp(self, email, action, timestamp):
 
-        OTP = self.generate_otp()
+        OTP = self.create_otp()
 
         new_action = {
             'email': email,
@@ -134,3 +198,24 @@ class User:
             return True
         except Exception as e:
             return False
+
+user = User()
+email = 'prateekbedi96@gmail.com'
+name = 'Prateek Bedi'
+password = 'abcd'
+phone_number = 9406011847
+role = 'patient'
+reason= 'malpractice'
+
+# if(user.register(email,name,password,phone_number,role)):
+#     print("User created")
+
+# print(user.login(email,password))
+
+#print(user.verify_user(email))
+
+# print(user.block_user(email))
+
+# print(user.verify_user(email))
+
+print(user.reactivate_user(email))
