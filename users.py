@@ -108,9 +108,9 @@ class User:
             password_validation = self.validate_password(user, password)
             if(password_validation):
                 # For security, return a token that will be used to monitor all authenticated activities. 
-                return True
+                return 201
             else:
-                return False
+                return 202
         else:
             return 'Please register to continue'
     
@@ -120,6 +120,7 @@ class User:
 
         try:
             self.users.update_one({'email': email}, {'$set': {'password': new_password}})
+            return True
         # Add a module to send an email alert to the user stating that their password has been changed.
         
         except Exception as e:
