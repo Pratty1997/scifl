@@ -55,7 +55,7 @@ class Banks:
         self.db = client.scifl
         self.banks = self.db.banks
 
-    def add_bank(self, name, phone_number, pin, city, state, available_facilities):
+    def add_bank(self, name, phone_number, pin, city, state):
 
         add = {
             'name': name,
